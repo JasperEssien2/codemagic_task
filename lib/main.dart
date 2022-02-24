@@ -1,3 +1,4 @@
+import 'package:codemagic_task/state_management/app_state.dart';
 import 'package:codemagic_task/widgets/author_detail_screen.dart';
 import 'package:codemagic_task/widgets/author_list_screen.dart';
 import 'package:flutter/material.dart';
@@ -13,15 +14,17 @@ class MyApp extends StatelessWidget {
   Widget build(BuildContext context) {
     final themeDataMap = _themeData(context);
 
-    return MaterialApp(
-      title: 'Author App',
-      themeMode: ThemeMode.dark,
-      darkTheme: themeDataMap['dark'],
-      theme: themeDataMap['light'],
-      home: const AuthorsListScreen(),
-      routes: {
-        AuthorDetailScreen.screenName: (context) => const AuthorDetailScreen()
-      },
+    return AppRootWidget(
+      child: MaterialApp(
+        title: 'Author App',
+        themeMode: ThemeMode.dark,
+        darkTheme: themeDataMap['dark'],
+        theme: themeDataMap['light'],
+        home: const AuthorsListScreen(),
+        routes: {
+          AuthorDetailScreen.screenName: (context) => const AuthorDetailScreen()
+        },
+      ),
     );
   }
 
