@@ -7,6 +7,7 @@ class Author {
     this.name,
     this.quoteCount,
     this.slug,
+    this.image,
   });
 
   final String? link;
@@ -16,6 +17,7 @@ class Author {
   final String? name;
   final String? quoteCount;
   final String? slug;
+  final String? image;
 }
 
 class AuthorList {
