@@ -25,7 +25,7 @@ class _AuthorDetailScreenState extends State<AuthorDetailScreen> {
 
     return Scaffold(
       appBar: AppBar(
-        title: const Text("Jasper Essien"),
+        title: Text("${_author.name}"),
         elevation: 4,
       ),
       body: Hero(
