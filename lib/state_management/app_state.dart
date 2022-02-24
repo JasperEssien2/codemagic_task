@@ -1,6 +1,5 @@
 import 'package:codemagic_task/services/author_models.dart';
 import 'package:codemagic_task/services/author_service.dart';
-import 'package:either_dart/either.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/scheduler.dart';
@@ -64,17 +63,17 @@ class _AppRootWidgetState extends State<AppRootWidget> {
   Future<void> fetchAuthors() async {
     if (hasMoreToFetch) {
       final response = await service.fetchAuthors(page: nextPageNumber);
-      if (response.isLeft) {
-        _handleSuccess(response);
+      if (response.isRight) {
+        _handleSuccess(response.right);
       } else {
         ScaffoldMessenger.of(context)
-            .showSnackBar(SnackBar(content: Text(response.right)));
+            .showSnackBar(SnackBar(content: Text(response.left)));
       }
     }
   }
 
-  void _handleSuccess(Either<AuthorList, String> response) {
-    final authorListModel = response.left;
+  void _handleSuccess(AuthorList response) {
+    final authorListModel = response;
     setState(() {
       nextPageNumber = nextPageNumber + 1;
       hasMoreToFetch = nextPageNumber != authorListModel.totalPages;

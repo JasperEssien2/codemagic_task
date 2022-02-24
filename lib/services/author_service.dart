@@ -1,5 +1,3 @@
-import 'dart:developer';
-
 import 'package:codemagic_task/services/author_models.dart';
 import 'package:dio/dio.dart';
 import 'package:either_dart/either.dart';
@@ -8,17 +6,16 @@ class AuthorService {
   final String authorUrl = "https://quotable.io/authors";
   final dioInstance = Dio();
 
-  Future<Either<AuthorList, String>> fetchAuthors({int page = 1}) async {
+  Future<Either<String, AuthorList>> fetchAuthors({int page = 1}) async {
     try {
       final response = await dioInstance.get(
         authorUrl,
         queryParameters: {'page': page},
       );
 
-      return Left(AuthorList.fromMap(response.data, authorImage));
+      return Right(AuthorList.fromMap(response.data, authorImage));
     } catch (e) {
-      log(e.toString());
-      return const Right("An error occurred, please try again!");
+      return const Left("An error occurred, please try again!");
     }
   }
 
