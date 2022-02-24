@@ -16,12 +16,19 @@ class AuthorItem extends StatelessWidget {
       ),
       child: ListTile(
         onTap: () {
-          Navigator.pushNamed(context, AuthorDetailScreen.screenName);
+          Navigator.pushNamed(
+            context,
+            AuthorDetailScreen.screenName,
+            arguments: author,
+          );
         },
-        leading: CircleAvatar(
-          radius: 25,
-          backgroundColor: Colors.grey[300],
-          backgroundImage: NetworkImage(author.image!),
+        leading: Hero(
+          tag: author.slug ?? '${author.id}',
+          child: CircleAvatar(
+            radius: 25,
+            backgroundColor: Colors.grey[300],
+            backgroundImage: NetworkImage(author.image!),
+          ),
         ),
         title: Text(author.name!),
         subtitle: Text(author.description!),

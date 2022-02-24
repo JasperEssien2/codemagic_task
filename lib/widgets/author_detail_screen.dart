@@ -1,3 +1,4 @@
+import 'package:codemagic_task/services/author_models.dart';
 import 'package:flutter/material.dart';
 
 class AuthorDetailScreen extends StatefulWidget {
@@ -10,6 +11,14 @@ class AuthorDetailScreen extends StatefulWidget {
 }
 
 class _AuthorDetailScreenState extends State<AuthorDetailScreen> {
+  late final Author _author;
+
+  @override
+  void didChangeDependencies() {
+    _author = ModalRoute.of(context)!.settings.arguments as Author;
+    super.didChangeDependencies();
+  }
+
   @override
   Widget build(BuildContext context) {
     final size = MediaQuery.of(context).size;
@@ -19,43 +28,48 @@ class _AuthorDetailScreenState extends State<AuthorDetailScreen> {
         title: const Text("Jasper Essien"),
         elevation: 4,
       ),
-      body: Container(
-        height: size.height * 0.35,
-        width: size.width,
-        decoration: BoxDecoration(
-          color: Colors.grey[800],
-          image: const DecorationImage(
-            fit: BoxFit.cover,
-            image: NetworkImage(
-              "https://www.gannett-cdn.com/media/USATODAY/USATODAY/2013/03/22/ap-obit-achebe-16_9.jpg?width=2164&height=1223&fit=crop&format=pjpg&auto=webp",
+      body: Hero(
+        tag: _author.slug ?? "${_author.id}",
+        child: Container(
+          height: size.height * 0.35,
+          width: size.width,
+          decoration: BoxDecoration(
+            color: Colors.grey[800],
+            image: DecorationImage(
+              fit: BoxFit.cover,
+              image: NetworkImage(
+                _author.image ?? '',
+              ),
             ),
           ),
         ),
       ),
       bottomSheet: Container(
         constraints: BoxConstraints.expand(height: size.height * 0.6),
-        child: const _BottomSheet(),
+        child: _BottomSheet(author: _author),
       ),
     );
   }
 }
 
 class _BottomSheet extends StatelessWidget {
-  const _BottomSheet({Key? key}) : super(key: key);
+  const _BottomSheet({
+    Key? key,
+    required this.author,
+  }) : super(key: key);
 
+  final Author author;
   @override
   Widget build(BuildContext context) {
-    return const SingleChildScrollView(
-      padding: EdgeInsets.symmetric(
+    return SingleChildScrollView(
+      padding: const EdgeInsets.symmetric(
         horizontal: 24,
         vertical: 12,
       ),
       child: Text(
-        """What is Lorem Ipsum?
-Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the industry's standard dummy text ever since the 1500s, when an unknown printer took a galley of type and scrambled it to make a type specimen book. It has survived not only five centuries, but also the leap into electronic typesetting, remaining essentially unchanged. It was popularised in the 1960s with the release of Letraset sheets containing Lorem Ipsum passages, and more recently with desktop publishing software like Aldus PageMaker including versions of Lorem Ipsum.
-      """,
+        author.bio ?? '',
         textAlign: TextAlign.left,
-        style: TextStyle(
+        style: const TextStyle(
           letterSpacing: 0.5,
           height: 1.5,
           fontWeight: FontWeight.w500,
