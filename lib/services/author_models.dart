@@ -17,7 +17,7 @@ class Author {
   final String? description;
   final String? id;
   final String? name;
-  final String? quoteCount;
+  final int? quoteCount;
   final String? slug;
   final String? image;
 
@@ -60,6 +60,11 @@ class Author {
         slug.hashCode ^
         image.hashCode;
   }
+
+  @override
+  String toString() {
+    return 'Author(link: $link, bio: $bio, description: $description, id: $id, name: $name, quoteCount: $quoteCount, slug: $slug, image: $image)';
+  }
 }
 
 class AuthorList {
@@ -82,9 +87,9 @@ class AuthorList {
   factory AuthorList.fromMap(
       Map<String, dynamic> map, String Function(String slug) imageUrlBuilder) {
     return AuthorList(
-      authors: map['authors'] != null
+      authors: map['results'] != null
           ? List<Author>.from(
-              map['authors']?.map(
+              map['results']?.map(
                 (x) => Author.fromMap(x, imageUrlBuilder(x['slug'])),
               ),
             )
@@ -100,23 +105,28 @@ class AuthorList {
   @override
   bool operator ==(Object other) {
     if (identical(this, other)) return true;
-  
+
     return other is AuthorList &&
-      listEquals(other.authors, authors) &&
-      other.count == count &&
-      other.totalCount == totalCount &&
-      other.page == page &&
-      other.totalPages == totalPages &&
-      other.lastItemIndex == lastItemIndex;
+        listEquals(other.authors, authors) &&
+        other.count == count &&
+        other.totalCount == totalCount &&
+        other.page == page &&
+        other.totalPages == totalPages &&
+        other.lastItemIndex == lastItemIndex;
   }
 
   @override
   int get hashCode {
     return authors.hashCode ^
-      count.hashCode ^
-      totalCount.hashCode ^
-      page.hashCode ^
-      totalPages.hashCode ^
-      lastItemIndex.hashCode;
+        count.hashCode ^
+        totalCount.hashCode ^
+        page.hashCode ^
+        totalPages.hashCode ^
+        lastItemIndex.hashCode;
+  }
+
+  @override
+  String toString() {
+    return 'AuthorList(authors: $authors, count: $count, totalCount: $totalCount, page: $page, totalPages: $totalPages, lastItemIndex: $lastItemIndex)';
   }
 }
