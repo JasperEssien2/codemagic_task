@@ -9,7 +9,9 @@ abstract class AppStateLogic {
 
   Future<void> fetchAuthors();
 
-  bool get isFetchingNextPage;
+  bool get isLoading;
+
+  bool get isBottomLoading;
 }
 
 class AppStateModel {
@@ -75,11 +77,13 @@ class _AppRootWidgetState extends State<AppRootWidget> with AppStateLogic {
 
   bool isDarkMode = false;
 
-  final List<Author> authorList = [];
+  List<Author> authorList = [];
 
   int _nextPageNumber = 1;
 
   bool _hasMoreToFetch = true;
+
+  bool _isLoadingState = false;
 
   @override
   void initState() {
@@ -97,13 +101,13 @@ class _AppRootWidgetState extends State<AppRootWidget> with AppStateLogic {
 
   @override
   Future<void> fetchAuthors() async {
-    if (_hasMoreToFetch) {
+    if (_hasMoreToFetch && !_isLoadingState) {
+      _isLoadingState = true;
       final response = await service.fetchAuthors(page: _nextPageNumber);
       if (response.isRight) {
         _handleSuccess(response.right);
       } else {
-        ScaffoldMessenger.of(context)
-            .showSnackBar(SnackBar(content: Text(response.left)));
+        _handleError(response.left);
       }
     }
   }
@@ -114,11 +118,24 @@ class _AppRootWidgetState extends State<AppRootWidget> with AppStateLogic {
       _nextPageNumber = _nextPageNumber + 1;
       _hasMoreToFetch = _nextPageNumber != authorListModel.totalPages;
       authorList.addAll(authorListModel.authors?.toList() ?? []);
+      _isLoadingState = false;
     });
   }
 
+  void _handleError(String response) {
+    setState(() {
+      _isLoadingState = false;
+    });
+    ScaffoldMessenger.of(context).showSnackBar(
+      SnackBar(content: Text(response)),
+    );
+  }
+
   @override
-  bool get isFetchingNextPage => _nextPageNumber > 1;
+  bool get isLoading => _isLoadingState && _nextPageNumber <= 1;
+
+  @override
+  bool get isBottomLoading => _isLoadingState && _nextPageNumber > 1;
 
   @override
   Widget build(BuildContext context) {
@@ -126,7 +143,7 @@ class _AppRootWidgetState extends State<AppRootWidget> with AppStateLogic {
       child: widget.child,
       logic: this,
       data: AppStateModel(
-        authorList: authorList,
+        authorList: List.from(authorList),
         isDarkMode: isDarkMode,
       ),
     );
