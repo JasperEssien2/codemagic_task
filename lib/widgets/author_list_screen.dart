@@ -1,4 +1,5 @@
 import 'package:codemagic_task/services/author_models.dart';
+import 'package:codemagic_task/state_management/app_state.dart';
 import 'package:codemagic_task/widgets/appbar.dart';
 import 'package:flutter/material.dart';
 
@@ -41,6 +42,8 @@ Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem
 
   @override
   Widget build(BuildContext context) {
+    final appState = AppState.of(context);
+
     return Scaffold(
       appBar: PreferredSize(
         preferredSize: const Size.fromHeight(56),
@@ -55,12 +58,15 @@ Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem
         ),
       ),
       body: SafeArea(
-        child: ListView.builder(
-          itemCount: authors.length,
-          padding: const EdgeInsets.symmetric(vertical: 24),
-          physics: const BouncingScrollPhysics(),
-          itemBuilder: (c, index) => AuthorItem(
-            author: authors[index],
+        child: FutureBuilder(
+          // future: appState.,
+          builder: (c, state)=> ListView.builder(
+            itemCount: authors.length,
+            padding: const EdgeInsets.symmetric(vertical: 24),
+            physics: const BouncingScrollPhysics(),
+            itemBuilder: (c, index) => AuthorItem(
+              author: authors[index],
+            ),
           ),
         ),
       ),
