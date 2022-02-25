@@ -4,21 +4,32 @@ import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/scheduler.dart';
 
+abstract class AppStateLogic {
+  bool get isDarkMode;
+
+  List<Author> get authorList;
+
+  void toggleDarkMode();
+
+  Future<void> fetchAuthors();
+}
+
 class AppState extends InheritedWidget {
   const AppState({
     Key? key,
-    required this.isDarkMode,
-    required this.authorList,
+    required this.logic,
     required Widget child,
   }) : super(key: key, child: child);
 
-  final bool isDarkMode;
-  final List<Author> authorList;
+  final AppStateLogic logic;
 
   @override
-  bool updateShouldNotify(covariant AppState oldWidget) =>
-      !listEquals(oldWidget.authorList, authorList) &&
-      oldWidget.isDarkMode != isDarkMode;
+  bool updateShouldNotify(covariant AppState oldWidget) {
+    final logic = oldWidget.logic;
+
+    return !listEquals(logic.authorList, logic.authorList) &&
+        logic.isDarkMode != logic.isDarkMode;
+  }
 
   static AppState of(BuildContext context) {
     final result = context.dependOnInheritedWidgetOfExactType<AppState>();
@@ -39,30 +50,36 @@ class AppRootWidget extends StatefulWidget {
   _AppRootWidgetState createState() => _AppRootWidgetState();
 }
 
-class _AppRootWidgetState extends State<AppRootWidget> {
+class _AppRootWidgetState extends State<AppRootWidget>
+    implements AppStateLogic {
   final service = AuthorService();
 
-  late bool isDarkMode;
-  List<Author> authorList = [];
-  int nextPageNumber = 1;
-  bool hasMoreToFetch = true;
+  late bool _isDarkMode;
+  final List<Author> _authorList = [];
+  int _nextPageNumber = 1;
+  bool _hasMoreToFetch = true;
 
   @override
   void initState() {
     super.initState();
-    isDarkMode =
+    _isDarkMode =
         SchedulerBinding.instance!.window.platformBrightness == Brightness.dark;
   }
 
+  @override
   void toggleDarkMode() {
     setState(() {
-      isDarkMode = !isDarkMode;
+      _isDarkMode = !_isDarkMode;
     });
   }
 
+  @override
+  bool get isDarkMode => _isDarkMode;
+
+  @override
   Future<void> fetchAuthors() async {
-    if (hasMoreToFetch) {
-      final response = await service.fetchAuthors(page: nextPageNumber);
+    if (_hasMoreToFetch) {
+      final response = await service.fetchAuthors(page: _nextPageNumber);
       if (response.isRight) {
         _handleSuccess(response.right);
       } else {
@@ -75,18 +92,20 @@ class _AppRootWidgetState extends State<AppRootWidget> {
   void _handleSuccess(AuthorList response) {
     final authorListModel = response;
     setState(() {
-      nextPageNumber = nextPageNumber + 1;
-      hasMoreToFetch = nextPageNumber != authorListModel.totalPages;
-      authorList.addAll(authorListModel.authors?.toList() ?? []);
+      _nextPageNumber = _nextPageNumber + 1;
+      _hasMoreToFetch = _nextPageNumber != authorListModel.totalPages;
+      _authorList.addAll(authorListModel.authors?.toList() ?? []);
     });
   }
 
   @override
+  List<Author> get authorList => _authorList;
+
+  @override
   Widget build(BuildContext context) {
     return AppState(
-      authorList: authorList,
       child: widget.child,
-      isDarkMode: isDarkMode,
+      logic: this,
     );
   }
 }
