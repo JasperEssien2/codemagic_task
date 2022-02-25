@@ -12,6 +12,8 @@ abstract class AppStateLogic {
   void toggleDarkMode();
 
   Future<void> fetchAuthors();
+
+  bool get isFetchingNextPage;
 }
 
 class AppState extends InheritedWidget {
@@ -55,8 +57,11 @@ class _AppRootWidgetState extends State<AppRootWidget>
   final service = AuthorService();
 
   late bool _isDarkMode;
+
   final List<Author> _authorList = [];
+
   int _nextPageNumber = 1;
+
   bool _hasMoreToFetch = true;
 
   @override
@@ -100,6 +105,9 @@ class _AppRootWidgetState extends State<AppRootWidget>
 
   @override
   List<Author> get authorList => _authorList;
+
+  @override
+  bool get isFetchingNextPage => _nextPageNumber > 1;
 
   @override
   Widget build(BuildContext context) {
