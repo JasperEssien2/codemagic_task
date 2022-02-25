@@ -3,6 +3,7 @@ import 'dart:developer';
 import 'package:codemagic_task/state_management/app_state.dart';
 import 'package:codemagic_task/widgets/appbar.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/scheduler.dart';
 
 import 'author_item.dart';
 
@@ -19,11 +20,15 @@ class _AuthorsListScreenState extends State<AuthorsListScreen> {
   @override
   void initState() {
     super.initState();
+    SchedulerBinding.instance?.addPostFrameCallback((timeStamp) {
+      AppState.of(context).logic.fetchAuthors();
+    });
+
     scrollController.addListener(
       () {
         if (_hasReachedBottomOfList) {
           AppState.of(context).logic.fetchAuthors();
-          log("HAS REACHED END OF LIST ================");
+          
         }
       },
     );
@@ -57,7 +62,7 @@ class _AuthorsListScreenState extends State<AuthorsListScreen> {
       ),
       body: SafeArea(
         child: FutureBuilder(
-          future: appState.logic.fetchAuthors(),
+          // future: appState.logic.fetchAuthors(),
           builder: (c, state) =>
               state.connectionState == ConnectionState.waiting
                   ? const Center(

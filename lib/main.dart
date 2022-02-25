@@ -15,14 +15,21 @@ class MyApp extends StatelessWidget {
     final themeDataMap = _themeData(context);
 
     return AppRootWidget(
-      child: MaterialApp(
-        title: 'Author App',
-        themeMode: ThemeMode.dark,
-        darkTheme: themeDataMap['dark'],
-        theme: themeDataMap['light'],
-        home: const AuthorsListScreen(),
-        routes: {
-          AuthorDetailScreen.screenName: (context) => const AuthorDetailScreen()
+      child: Builder(
+        builder: (context) {
+          return MaterialApp(
+            title: 'Author App',
+            themeMode: AppState.of(context).data.isDarkMode
+                ? ThemeMode.dark
+                : ThemeMode.light,
+            darkTheme: themeDataMap['dark'],
+            theme: themeDataMap['light'],
+            home: const AuthorsListScreen(),
+            routes: {
+              AuthorDetailScreen.screenName: (context) =>
+                  const AuthorDetailScreen()
+            },
+          );
         },
       ),
     );
