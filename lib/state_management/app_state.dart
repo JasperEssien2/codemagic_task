@@ -1,3 +1,5 @@
+import 'dart:developer';
+
 import 'package:codemagic_task/services/author_models.dart';
 import 'package:codemagic_task/services/author_service.dart';
 import 'package:flutter/foundation.dart';
@@ -75,6 +77,7 @@ class _AppRootWidgetState extends State<AppRootWidget>
   void toggleDarkMode() {
     setState(() {
       _isDarkMode = !_isDarkMode;
+      log("TOGGLE IS DARKMODE ============== $_isDarkMode");
     });
   }
 
