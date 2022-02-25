@@ -1,5 +1,6 @@
 import 'package:codemagic_task/services/author_models.dart';
 import 'package:codemagic_task/services/author_service.dart';
+import 'package:dio/dio.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/scheduler.dart';
@@ -111,7 +112,8 @@ class AppRootWidget extends StatefulWidget {
 }
 
 class _AppRootWidgetState extends State<AppRootWidget> with AppStateLogic {
-  final service = AuthorService();
+  final service = AuthorService(
+      dioInstance: Dio(), authorUrl: "https://quotable.io/authors");
 
   UiState _uiState = UiState();
 
@@ -141,11 +143,12 @@ class _AppRootWidgetState extends State<AppRootWidget> with AppStateLogic {
 
   @override
   Future<void> fetchAuthors() async {
-    if (_hasMoreToFetch && !_uiState.isLoadingState) {
+    if (_canFetchData) {
       _updateUiState(
         _uiState.copyWith(
-            isLoading: _nextPageNumber <= 1,
-            isBottomLoading: _nextPageNumber > 1),
+          isLoading: _nextPageNumber <= 1,
+          isBottomLoading: _nextPageNumber > 1,
+        ),
       );
 
       final response = await service.fetchAuthors(page: _nextPageNumber);
@@ -155,6 +158,8 @@ class _AppRootWidgetState extends State<AppRootWidget> with AppStateLogic {
       );
     }
   }
+
+  bool get _canFetchData => _hasMoreToFetch && !_uiState.isLoadingState;
 
   void _handleSuccess(AuthorList response) {
     final cachedAuthors = _uiState.authors ?? [];
