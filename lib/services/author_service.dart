@@ -6,6 +6,8 @@ class AuthorService {
   final String authorUrl = "https://quotable.io/authors";
   final dioInstance = Dio();
 
+  //AuthorService(this.authorUrl, this.dioInstance);
+
   Future<Either<String, AuthorList>> fetchAuthors({int page = 1}) async {
     try {
       final response = await dioInstance.get(

@@ -1,5 +1,3 @@
-import 'dart:developer';
-
 import 'package:codemagic_task/state_management/app_state.dart';
 import 'package:codemagic_task/widgets/appbar.dart';
 import 'package:flutter/material.dart';
@@ -28,7 +26,6 @@ class _AuthorsListScreenState extends State<AuthorsListScreen> {
       () {
         if (_hasReachedBottomOfList) {
           AppState.of(context).logic.fetchAuthors();
-          
         }
       },
     );
@@ -42,7 +39,7 @@ class _AuthorsListScreenState extends State<AuthorsListScreen> {
   @override
   Widget build(BuildContext context) {
     final appState = AppState.of(context);
-    final authors = appState.data.authorList;
+    final authors = appState.uiState.authors;
 
     return Scaffold(
       appBar: PreferredSize(
@@ -61,26 +58,33 @@ class _AuthorsListScreenState extends State<AuthorsListScreen> {
         ),
       ),
       body: SafeArea(
-        child: FutureBuilder(
-          // future: appState.logic.fetchAuthors(),
-          builder: (c, state) =>
-              state.connectionState == ConnectionState.waiting
-                  ? const Center(
-                      child: CircularProgressIndicator(),
-                    )
-                  : ListView.builder(
-                      itemCount: authors.length,
-                      controller: scrollController,
-                      padding: const EdgeInsets.symmetric(vertical: 24),
-                      physics: const BouncingScrollPhysics(),
-                      itemBuilder: (c, index) => AuthorItem(
-                        author: authors[index],
-                      ),
-                    ),
+        child: Stack(
+          children: [
+            ListView.separated(
+              itemCount: authors!.length,
+              controller: scrollController,
+              padding: const EdgeInsets.symmetric(vertical: 24),
+              physics: const BouncingScrollPhysics(),
+              itemBuilder: (c, index) => AuthorItem(
+                author: authors[index],
+              ),
+              separatorBuilder: (c, index) {
+                if (index == authors.length - 1 &&
+                    appState.uiState.isBottomLoading) {
+                  return const LinearProgressIndicator(minHeight: 6);
+                }
+                return const SizedBox.shrink();
+              },
+            ),
+            if (appState.uiState.isLoading)
+              const Center(
+                child: CircularProgressIndicator(),
+              )
+          ],
         ),
       ),
     );
   }
 
-  bool get _isLightMode => !AppState.of(context).data.isDarkMode;
+  bool get _isLightMode => !AppState.of(context).uiState.darkMode;
 }

@@ -1,6 +1,5 @@
 import 'package:codemagic_task/services/author_models.dart';
 import 'package:codemagic_task/services/author_service.dart';
-import 'package:either_dart/src/either.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/scheduler.dart';
@@ -9,33 +8,6 @@ abstract class AppStateLogic {
   void toggleDarkMode();
 
   Future<void> fetchAuthors();
-
-  bool get isLoading;
-
-  bool get isBottomLoading;
-}
-
-class AppStateModel {
-  final bool isDarkMode;
-
-  final List<Author> authorList;
-
-  AppStateModel({
-    required this.isDarkMode,
-    required this.authorList,
-  });
-
-  @override
-  bool operator ==(Object other) {
-    if (identical(this, other)) return true;
-
-    return other is AppStateModel &&
-        other.isDarkMode == isDarkMode &&
-        listEquals(other.authorList, authorList);
-  }
-
-  @override
-  int get hashCode => isDarkMode.hashCode ^ authorList.hashCode;
 }
 
 class AppState extends InheritedWidget {
@@ -43,15 +15,15 @@ class AppState extends InheritedWidget {
     Key? key,
     required this.logic,
     required Widget child,
-    required this.data,
+    required this.uiState,
   }) : super(key: key, child: child);
 
   final AppStateLogic logic;
-  final AppStateModel data;
+  final UiState uiState;
 
   @override
   bool updateShouldNotify(AppState oldWidget) {
-    return data != oldWidget.data;
+    return uiState != oldWidget.uiState;
   }
 
   static AppState of(BuildContext context) {
@@ -59,6 +31,71 @@ class AppState extends InheritedWidget {
 
     assert(result != null, 'No $AppState found in context');
     return result!;
+  }
+}
+
+class UiState {
+  final bool isLoading;
+  final bool isBottomLoading;
+  final List<Author>? authors;
+  final String? errorMessage;
+  final bool darkMode;
+
+  UiState({
+    this.isLoading = false,
+    this.isBottomLoading = false,
+    this.authors,
+    this.errorMessage,
+    this.darkMode = true,
+  });
+
+  success(List<Author> authors) =>
+      UiState(isLoading: false, isBottomLoading: false, authors: authors);
+
+  error(String errorMessage) => UiState(
+        errorMessage: errorMessage,
+        isLoading: false,
+        isBottomLoading: false,
+        authors: [],
+      );
+
+  darkModeState() => copyWith(darkMode: !darkMode);
+
+  bool get isLoadingState => isBottomLoading || isLoading;
+
+  UiState copyWith({
+    bool? isLoading,
+    bool? isBottomLoading,
+    List<Author>? authors,
+    bool? darkMode,
+  }) {
+    return UiState(
+      isLoading: isLoading ?? this.isLoading,
+      isBottomLoading: isBottomLoading ?? this.isBottomLoading,
+      authors: authors ?? this.authors,
+      darkMode: darkMode ?? this.darkMode,
+    );
+  }
+
+  @override
+  bool operator ==(Object other) {
+    if (identical(this, other)) return true;
+
+    return other is UiState &&
+        other.isLoading == isLoading &&
+        other.isBottomLoading == isBottomLoading &&
+        listEquals(other.authors, authors) &&
+        other.errorMessage == errorMessage &&
+        other.darkMode == darkMode;
+  }
+
+  @override
+  int get hashCode {
+    return isLoading.hashCode ^
+        isBottomLoading.hashCode ^
+        authors.hashCode ^
+        errorMessage.hashCode ^
+        darkMode.hashCode;
   }
 }
 
@@ -76,77 +113,69 @@ class AppRootWidget extends StatefulWidget {
 class _AppRootWidgetState extends State<AppRootWidget> with AppStateLogic {
   final service = AuthorService();
 
-  bool isDarkMode = false;
-
-  List<Author> authorList = [];
+  UiState _uiState = UiState();
 
   int _nextPageNumber = 1;
 
   bool _hasMoreToFetch = true;
 
-  bool _isLoadingState = false;
+  void _updateUiState(UiState uiState) {
+    setState(() {
+      _uiState = uiState;
+    });
+  }
 
   @override
   void initState() {
     super.initState();
-    isDarkMode =
-        SchedulerBinding.instance!.window.platformBrightness == Brightness.dark;
-  }
-
-  @override
-  void toggleDarkMode() {
-    setState(() {
-      isDarkMode = !isDarkMode;
-    });
-  }
-
-  @override
-  Future<void> fetchAuthors() async {
-    if (_hasMoreToFetch && !_isLoadingState) {
-      _isLoadingState = true;
-      final response = await service.fetchAuthors(page: _nextPageNumber);
-      if (response.isRight) {
-        _handleSuccess(response.right);
-      } else {
-        _handleError(response);
-      }
-    }
-  }
-
-  void _handleSuccess(AuthorList response) {
-    final authorListModel = response;
-    setState(() {
-      _nextPageNumber = _nextPageNumber + 1;
-      _hasMoreToFetch = _nextPageNumber != authorListModel.totalPages;
-      authorList.addAll(authorListModel.authors?.toList() ?? []);
-      _isLoadingState = false;
-    });
-  }
-
-  void _handleError(Either<String, AuthorList> response) {
-    setState(() {
-      _isLoadingState = false;
-    });
-    ScaffoldMessenger.of(context).showSnackBar(
-      SnackBar(content: Text(response.left)),
+    _uiState = _uiState.copyWith(
+      darkMode: SchedulerBinding.instance!.window.platformBrightness ==
+          Brightness.dark,
     );
   }
 
   @override
-  bool get isLoading => _isLoadingState && _nextPageNumber <= 1;
+  void toggleDarkMode() {
+    _updateUiState(_uiState.darkModeState());
+  }
 
   @override
-  bool get isBottomLoading => _isLoadingState && _nextPageNumber > 1;
+  Future<void> fetchAuthors() async {
+    if (_hasMoreToFetch && !_uiState.isLoadingState) {
+      _updateUiState(
+        _uiState.copyWith(
+            isLoading: _nextPageNumber <= 1,
+            isBottomLoading: _nextPageNumber > 1),
+      );
+
+      final response = await service.fetchAuthors(page: _nextPageNumber);
+      response.fold(
+        (errorMessage) => _handleError(errorMessage),
+        (right) => _handleSuccess(right),
+      );
+    }
+  }
+
+  void _handleSuccess(AuthorList response) {
+    final cachedAuthors = _uiState.authors ?? [];
+    cachedAuthors.addAll(response.authors ?? []);
+
+    _nextPageNumber = _nextPageNumber + 1;
+    _hasMoreToFetch = _nextPageNumber != response.totalPages;
+
+    _updateUiState(_uiState.success(cachedAuthors));
+  }
+
+  void _handleError(String errorMessage) {
+    _updateUiState(_uiState.error(errorMessage));
+  }
 
   @override
   Widget build(BuildContext context) {
     return AppState(
       child: widget.child,
       logic: this,
-      data: AppStateModel(
-        authorList: List.from(authorList),
-        isDarkMode: isDarkMode,
-      ),
+      uiState: _uiState,
     );
   }
 }

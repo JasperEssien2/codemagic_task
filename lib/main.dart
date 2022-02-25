@@ -19,7 +19,7 @@ class MyApp extends StatelessWidget {
         builder: (context) {
           return MaterialApp(
             title: 'Author App',
-            themeMode: AppState.of(context).data.isDarkMode
+            themeMode: AppState.of(context).uiState.darkMode
                 ? ThemeMode.dark
                 : ThemeMode.light,
             darkTheme: themeDataMap['dark'],
