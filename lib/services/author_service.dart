@@ -11,8 +11,6 @@ class AuthorService {
   final String authorUrl;
   final Dio dioInstance;
 
-  //AuthorService(this.authorUrl, this.dioInstance);
-
   Future<Either<String, AuthorList>> fetchAuthors({int page = 1}) async {
     try {
       final response = await dioInstance.get(
