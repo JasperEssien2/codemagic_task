@@ -29,10 +29,10 @@ class AppState extends InheritedWidget {
 
   @override
   bool updateShouldNotify(covariant AppState oldWidget) {
-    final logic = oldWidget.logic;
+    final oldLogic = oldWidget.logic;
 
-    return !listEquals(logic.authorList, oldWidget.logic.authorList) ||
-        logic.isDarkMode != oldWidget.logic.isDarkMode;
+    return !listEquals(logic.authorList, oldLogic.authorList) ||
+        logic.isDarkMode != oldLogic.isDarkMode;
   }
 
   static AppState of(BuildContext context) {
