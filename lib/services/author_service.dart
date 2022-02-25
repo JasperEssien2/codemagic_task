@@ -5,8 +5,13 @@ import 'package:dio/dio.dart';
 import 'package:either_dart/either.dart';
 
 class AuthorService {
-  final String authorUrl = "https://quotable.io/authors";
-  final dioInstance = Dio();
+  AuthorService({
+    required this.authorUrl,
+    required this.dioInstance,
+  });
+
+  final String authorUrl;
+  final Dio dioInstance;
 
   Future<Either<AuthorList, String>> fetchAuthors({int page = 1}) async {
     try {
