@@ -37,7 +37,7 @@ class _AuthorsListScreenState extends State<AuthorsListScreen> {
   @override
   Widget build(BuildContext context) {
     final appState = AppState.of(context);
-    final authors = appState.logic.authorList;
+    final authors = appState.data.authorList;
 
     return Scaffold(
       appBar: PreferredSize(
@@ -77,5 +77,5 @@ class _AuthorsListScreenState extends State<AuthorsListScreen> {
     );
   }
 
-  bool get _isLightMode => !AppState.of(context).logic.isDarkMode;
+  bool get _isLightMode => !AppState.of(context).data.isDarkMode;
 }

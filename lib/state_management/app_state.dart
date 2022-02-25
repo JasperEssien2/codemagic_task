@@ -1,5 +1,3 @@
-import 'dart:developer';
-
 import 'package:codemagic_task/services/author_models.dart';
 import 'package:codemagic_task/services/author_service.dart';
 import 'package:flutter/foundation.dart';
@@ -7,10 +5,6 @@ import 'package:flutter/material.dart';
 import 'package:flutter/scheduler.dart';
 
 abstract class AppStateLogic {
-  bool get isDarkMode;
-
-  List<Author> get authorList;
-
   void toggleDarkMode();
 
   Future<void> fetchAuthors();
@@ -18,21 +12,34 @@ abstract class AppStateLogic {
   bool get isFetchingNextPage;
 }
 
+class AppStateModel {
+  final bool isDarkMode;
+
+  final List<Author> authorList;
+
+  AppStateModel({
+    required this.isDarkMode,
+    required this.authorList,
+  });
+}
+
 class AppState extends InheritedWidget {
   const AppState({
     Key? key,
     required this.logic,
     required Widget child,
+    required this.data,
   }) : super(key: key, child: child);
 
   final AppStateLogic logic;
+  final AppStateModel data;
 
   @override
-  bool updateShouldNotify(covariant AppState oldWidget) {
-    final oldLogic = oldWidget.logic;
+  bool updateShouldNotify(AppState oldWidget) {
+    final oldData = oldWidget.data;
 
-    return !listEquals(logic.authorList, oldLogic.authorList) ||
-        logic.isDarkMode != oldLogic.isDarkMode;
+    return !listEquals(data.authorList, oldData.authorList) ||
+        data.isDarkMode != oldData.isDarkMode;
   }
 
   static AppState of(BuildContext context) {
@@ -54,13 +61,12 @@ class AppRootWidget extends StatefulWidget {
   _AppRootWidgetState createState() => _AppRootWidgetState();
 }
 
-class _AppRootWidgetState extends State<AppRootWidget>
-    implements AppStateLogic {
+class _AppRootWidgetState extends State<AppRootWidget> with AppStateLogic {
   final service = AuthorService();
 
-  late bool _isDarkMode;
+  bool isDarkMode = false;
 
-  final List<Author> _authorList = [];
+  final List<Author> authorList = [];
 
   int _nextPageNumber = 1;
 
@@ -69,20 +75,16 @@ class _AppRootWidgetState extends State<AppRootWidget>
   @override
   void initState() {
     super.initState();
-    _isDarkMode =
+    isDarkMode =
         SchedulerBinding.instance!.window.platformBrightness == Brightness.dark;
   }
 
   @override
   void toggleDarkMode() {
     setState(() {
-      _isDarkMode = !_isDarkMode;
-      log("TOGGLE IS DARKMODE ============== $_isDarkMode");
+      isDarkMode = !isDarkMode;
     });
   }
-
-  @override
-  bool get isDarkMode => _isDarkMode;
 
   @override
   Future<void> fetchAuthors() async {
@@ -102,12 +104,9 @@ class _AppRootWidgetState extends State<AppRootWidget>
     setState(() {
       _nextPageNumber = _nextPageNumber + 1;
       _hasMoreToFetch = _nextPageNumber != authorListModel.totalPages;
-      _authorList.addAll(authorListModel.authors?.toList() ?? []);
+      authorList.addAll(authorListModel.authors?.toList() ?? []);
     });
   }
-
-  @override
-  List<Author> get authorList => _authorList;
 
   @override
   bool get isFetchingNextPage => _nextPageNumber > 1;
@@ -117,6 +116,10 @@ class _AppRootWidgetState extends State<AppRootWidget>
     return AppState(
       child: widget.child,
       logic: this,
+      data: AppStateModel(
+        authorList: authorList,
+        isDarkMode: isDarkMode,
+      ),
     );
   }
 }
