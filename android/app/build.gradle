@@ -6,12 +6,11 @@ if (localPropertiesFile.exists()) {
     }
 }
 
-def keyProperties = new Properties()
-def keyPropertiesFile = rootProject.file('key.properties')
-if (keyPropertiesFile.exists()) {
-    keyPropertiesFile.withReader('UTF-8') { reader ->
-        Properties.load(reader)
-    }
+def keystoreProperties = new Properties()
+
+def keystorePropertiesFile = file('../key.properties')
+if (keystorePropertiesFile.exists()) {
+    keystoreProperties.load(new FileInputStream(keystorePropertiesFile))
 }
 
 
