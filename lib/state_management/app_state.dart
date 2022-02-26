@@ -121,12 +121,6 @@ class _AppRootWidgetState extends State<AppRootWidget> with AppStateLogic {
 
   bool _hasMoreToFetch = true;
 
-  void _updateUiState(UiState uiState) {
-    setState(() {
-      _uiState = uiState;
-    });
-  }
-
   @override
   void initState() {
     super.initState();
@@ -173,6 +167,12 @@ class _AppRootWidgetState extends State<AppRootWidget> with AppStateLogic {
 
   void _handleError(String errorMessage) {
     _updateUiState(_uiState.error(errorMessage));
+  }
+
+  void _updateUiState(UiState uiState) {
+    setState(() {
+      _uiState = uiState;
+    });
   }
 
   @override
