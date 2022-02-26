@@ -3,7 +3,6 @@ import 'package:codemagic_task/services/author_service.dart';
 import 'package:dio/dio.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/scheduler.dart';
 
 abstract class AppStateLogic {
   void toggleDarkMode();
@@ -120,15 +119,6 @@ class _AppRootWidgetState extends State<AppRootWidget> with AppStateLogic {
   int _nextPageNumber = 1;
 
   bool _hasMoreToFetch = true;
-
-  @override
-  void initState() {
-    super.initState();
-    _uiState = _uiState.copyWith(
-      darkMode: SchedulerBinding.instance!.window.platformBrightness ==
-          Brightness.dark,
-    );
-  }
 
   @override
   void toggleDarkMode() {
