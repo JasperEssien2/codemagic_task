@@ -52,6 +52,7 @@ class UiState {
   success(List<Author> authors) => copyWith(
         isLoading: false,
         isBottomLoading: false,
+        authors: authors,
       );
 
   error(String errorMessage) => copyWith(
