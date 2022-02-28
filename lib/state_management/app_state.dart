@@ -114,9 +114,11 @@ class AppRootWidget extends StatefulWidget {
   _AppRootWidgetState createState() => _AppRootWidgetState();
 }
 
-class _AppRootWidgetState extends State<AppRootWidget> with AppStateLogic {
-  final service = AuthorService(
-      dioInstance: Dio(), authorUrl: "https://quotable.io/authors");
+class _AppRootWidgetState extends State<AppRootWidget> implements AppStateLogic {
+  final AuthorService service = AuthorServiceHttp(
+    dioInstance: Dio(),
+    authorUrl: "https://quotable.io/authors",
+  );
 
   UiState _uiState = UiState();
 
