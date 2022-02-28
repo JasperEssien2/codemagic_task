@@ -16,7 +16,6 @@ class _AuthorDetailScreenState extends State<AuthorDetailScreen> {
   @override
   void didChangeDependencies() {
     _author = ModalRoute.of(context)!.settings.arguments as Author;
-    
     super.didChangeDependencies();
   }
 
