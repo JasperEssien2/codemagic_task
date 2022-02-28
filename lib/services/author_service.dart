@@ -4,8 +4,12 @@ import 'package:codemagic_task/services/author_models.dart';
 import 'package:dio/dio.dart';
 import 'package:either_dart/either.dart';
 
-class AuthorService {
-  AuthorService({
+abstract class AuthorService {
+  Future<Either<AuthorList, String>> fetchAuthors({int page = 1});
+}
+
+class AuthorServiceHttp implements AuthorService {
+  AuthorServiceHttp({
     required this.authorUrl,
     required this.dioInstance,
   });
@@ -13,6 +17,7 @@ class AuthorService {
   final String authorUrl;
   final Dio dioInstance;
 
+  @override
   Future<Either<AuthorList, String>> fetchAuthors({int page = 1}) async {
     try {
       final response = await dioInstance.get(
