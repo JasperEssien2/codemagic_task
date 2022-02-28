@@ -1,4 +1,4 @@
-import 'package:codemagic_task/services/author_models.dart';
+import 'package:codemagic_task/data/author_models.dart';
 
 class AuthorService {
   final String authorUrl = "https://quotable.io/authors";
