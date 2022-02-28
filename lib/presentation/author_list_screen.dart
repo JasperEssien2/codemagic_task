@@ -1,5 +1,5 @@
-import 'package:codemagic_task/services/author_models.dart';
-import 'package:codemagic_task/widgets/appbar.dart';
+import 'package:codemagic_task/data/author_models.dart';
+import 'package:codemagic_task/presentation/appbar.dart';
 import 'package:flutter/material.dart';
 
 import 'author_item.dart';
