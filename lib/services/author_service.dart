@@ -1,5 +1,3 @@
-import 'dart:developer';
-
 import 'package:codemagic_task/services/author_models.dart';
 import 'package:dio/dio.dart';
 import 'package:either_dart/either.dart';
@@ -27,7 +25,6 @@ class AuthorServiceHttp implements AuthorService {
 
       return Right(AuthorList.fromMap(response.data, authorImage));
     } catch (e) {
-      log(e.toString());
       return const Left("An error occurred, please try again!");
     }
   }
