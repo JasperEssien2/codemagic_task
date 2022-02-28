@@ -63,7 +63,7 @@ class Author {
 
   @override
   String toString() {
-    return 'Author(link: $link, bio: $bio, description: $description, id: $id, name: $name, quoteCount: $quoteCount, slug:  $slug, image: $image)';
+    return 'Author(link: $link, bio: $bio, description: $description, id: $id, name: $name, quoteCount: $quoteCount, slug: $slug, image: $image)';
   }
 }
 
