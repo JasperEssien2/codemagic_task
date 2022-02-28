@@ -1,5 +1,5 @@
-import 'package:codemagic_task/state_management/app_state.dart';
-import 'package:codemagic_task/widgets/appbar.dart';
+import 'package:codemagic_task/business_logic/app_state.dart';
+import 'package:codemagic_task/presentation/appbar.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/scheduler.dart';
 
