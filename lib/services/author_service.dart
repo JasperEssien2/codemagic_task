@@ -3,7 +3,7 @@ import 'package:dio/dio.dart';
 import 'package:either_dart/either.dart';
 
 abstract class AuthorService {
-  Future<Either<AuthorList, String>> fetchAuthors({int page = 1});
+  Future<Either<String, AuthorList>> fetchAuthors({int page = 1});
 }
 
 class AuthorServiceHttp implements AuthorService {
@@ -16,7 +16,7 @@ class AuthorServiceHttp implements AuthorService {
   final Dio dioInstance;
 
   @override
-  Future<Either<AuthorList, String>> fetchAuthors({int page = 1}) async {
+  Future<Either<String, AuthorList>> fetchAuthors({int page = 1}) async {
     try {
       final response = await dioInstance.get(
         authorUrl,
