@@ -1,5 +1,5 @@
-import 'package:codemagic_task/services/author_models.dart';
-import 'package:codemagic_task/widgets/author_detail_screen.dart';
+import 'package:codemagic_task/data/author_models.dart';
+import 'package:codemagic_task/presentation/author_detail_screen.dart';
 import 'package:flutter/material.dart';
 
 class AuthorItem extends StatelessWidget {
