@@ -1,5 +1,5 @@
-import 'package:codemagic_task/services/author_models.dart';
-import 'package:codemagic_task/services/author_service.dart';
+import 'package:codemagic_task/data/author_models.dart';
+import 'package:codemagic_task/data/author_service.dart';
 import 'package:dio/dio.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
@@ -114,7 +114,8 @@ class AppRootWidget extends StatefulWidget {
   _AppRootWidgetState createState() => _AppRootWidgetState();
 }
 
-class _AppRootWidgetState extends State<AppRootWidget> implements AppStateLogic {
+class _AppRootWidgetState extends State<AppRootWidget>
+    implements AppStateLogic {
   final AuthorService service = AuthorServiceHttp(
     dioInstance: Dio(),
     authorUrl: "https://quotable.io/authors",
