@@ -49,14 +49,16 @@ class UiState {
     this.darkMode = true,
   });
 
-  success(List<Author> authors) =>
-      UiState(isLoading: false, isBottomLoading: false, authors: authors);
+  success(List<Author> authors) => copyWith(
+        isLoading: false,
+        isBottomLoading: false,
+        authors: authors,
+      );
 
-  error(String errorMessage) => UiState(
+  error(String errorMessage) => copyWith(
         errorMessage: errorMessage,
         isLoading: false,
         isBottomLoading: false,
-        authors: [],
       );
 
   darkModeState() => copyWith(darkMode: !darkMode);
@@ -68,12 +70,14 @@ class UiState {
     bool? isBottomLoading,
     List<Author>? authors,
     bool? darkMode,
+    String? errorMessage,
   }) {
     return UiState(
       isLoading: isLoading ?? this.isLoading,
       isBottomLoading: isBottomLoading ?? this.isBottomLoading,
       authors: authors ?? this.authors,
       darkMode: darkMode ?? this.darkMode,
+      errorMessage: errorMessage ?? this.errorMessage,
     );
   }
 
@@ -110,9 +114,11 @@ class AppRootWidget extends StatefulWidget {
   _AppRootWidgetState createState() => _AppRootWidgetState();
 }
 
-class _AppRootWidgetState extends State<AppRootWidget> with AppStateLogic {
-  final service = AuthorService(
-      dioInstance: Dio(), authorUrl: "https://quotable.io/authors");
+class _AppRootWidgetState extends State<AppRootWidget> implements AppStateLogic {
+  final AuthorService service = AuthorServiceHttp(
+    dioInstance: Dio(),
+    authorUrl: "https://quotable.io/authors",
+  );
 
   UiState _uiState = UiState();
 
