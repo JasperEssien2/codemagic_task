@@ -1,6 +1,8 @@
 import 'package:codemagic_task/business_logic/app_state.dart';
+import 'package:codemagic_task/data/author_service.dart';
 import 'package:codemagic_task/presentation/author_detail_screen.dart';
 import 'package:codemagic_task/presentation/author_list_screen.dart';
+import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
 
 void main() async {
@@ -13,8 +15,13 @@ class MyApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final themeDataMap = _themeData(context);
+    final AuthorService service = AuthorServiceHttp(
+      dioInstance: Dio(),
+      authorUrl: "https://quotable.io/authors",
+    );
 
     return AppRootWidget(
+      service: service,
       child: MaterialApp(
         title: 'Author App',
         themeMode: ThemeMode.dark,
