@@ -156,8 +156,9 @@ class _AppRootWidgetState extends State<AppRootWidget>
     final cachedAuthors = _uiState.authors ?? [];
     cachedAuthors.addAll(response.authors ?? []);
 
-    _nextPageNumber = _nextPageNumber + 1;
     _hasMoreToFetch = _nextPageNumber != response.totalPages;
+
+    _nextPageNumber = _nextPageNumber + 1;
 
     _updateUiState(_uiState.success(cachedAuthors));
   }
