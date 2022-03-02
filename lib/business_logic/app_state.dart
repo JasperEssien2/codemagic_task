@@ -70,6 +70,11 @@ class UiState {
         errorMessage.hashCode ^
         darkMode.hashCode;
   }
+
+  @override
+  String toString() {
+    return 'UiState(isLoading: $isLoading, isBottomLoading: $isBottomLoading, authors: $authors, errorMessage: $errorMessage, darkMode: $darkMode)';
+  }
 }
 
 abstract class AppStateLogic {
@@ -113,11 +118,11 @@ class AppRootWidget extends StatefulWidget {
   final Widget child;
 
   @override
-  _AppRootWidgetState createState() => _AppRootWidgetState();
+  AppRootWidgetState createState() => AppRootWidgetState();
 }
 
-class _AppRootWidgetState extends State<AppRootWidget>
-    implements AppStateLogic {
+@visibleForTesting
+class AppRootWidgetState extends State<AppRootWidget> implements AppStateLogic {
   UiState _uiState = UiState();
 
   UiState get uiState => _uiState;
@@ -142,6 +147,7 @@ class _AppRootWidgetState extends State<AppRootWidget>
       );
 
       final response = await widget.service.fetchAuthors(page: _nextPageNumber);
+
       response.fold(
         (errorMessage) => _handleError(errorMessage),
         (right) => _handleSuccess(right),
