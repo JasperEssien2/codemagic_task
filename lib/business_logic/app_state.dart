@@ -120,6 +120,7 @@ class _AppRootWidgetState extends State<AppRootWidget>
     implements AppStateLogic {
   UiState _uiState = UiState();
 
+  UiState get uiState => _uiState;
 
   int _nextPageNumber = 1;
 
