@@ -120,6 +120,7 @@ class _AppRootWidgetState extends State<AppRootWidget>
     implements AppStateLogic {
   UiState _uiState = UiState();
 
+
   int _nextPageNumber = 1;
 
   bool _hasMoreToFetch = true;
