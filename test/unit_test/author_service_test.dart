@@ -4,7 +4,7 @@ import 'package:dio/dio.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:mocktail/mocktail.dart';
 
-import '../mocks/dio_mock.dart';
+import '../mocks/mocks.dart';
 
 const dataJson = {
   "count": 20,
@@ -51,7 +51,7 @@ main() {
             "Ensure that AuthorList is contained but string error throws an error "
             "when request is successful",
             () async {
-              _mockSuccess(dio, url);
+              _mockWhenSuccess(dio, url);
 
               var response = await authorService.fetchAuthors();
 
@@ -70,7 +70,7 @@ main() {
             "Ensure that AuthorList throws an exception but string error is contained "
             "when request fails",
             () async {
-              _mockError(dio, url);
+              _mockWhenError(dio, url);
 
               var response = await authorService.fetchAuthors();
 
@@ -87,7 +87,7 @@ main() {
           test(
             "Ensure that correct url is passed and by default page is set to 1 ",
             () {
-              _mockSuccess(dio, url);
+              _mockWhenSuccess(dio, url);
 
               authorService.fetchAuthors();
 
@@ -98,7 +98,7 @@ main() {
            test(
             "Ensure that correct url is passed and page is set correctly ",
             () {
-              _mockSuccess(dio, url);
+              _mockWhenSuccess(dio, url);
 
               authorService.fetchAuthors(page: 5);
 
@@ -124,7 +124,7 @@ main() {
   );
 }
 
-void _mockSuccess(MockedDio dio, String url) {
+void _mockWhenSuccess(MockedDio dio, String url) {
   when(() => dio.get(url, queryParameters: any(named: 'queryParameters')))
       .thenAnswer(
     (_) => Future.value(
@@ -136,7 +136,7 @@ void _mockSuccess(MockedDio dio, String url) {
   );
 }
 
-void _mockError(MockedDio dio, String url) {
+void _mockWhenError(MockedDio dio, String url) {
   when(() => dio.get(url, queryParameters: any(named: 'queryParameters')))
       .thenThrow(DioError(requestOptions: RequestOptions(path: '')));
 }

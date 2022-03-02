@@ -37,11 +37,13 @@ dependencies:
   dio: ^4.0.4
   either_dart: ^0.1.4
   
+  
 
 dev_dependencies:
   flutter_test:
     sdk: flutter
   mocktail: ^0.2.0
+  network_image_mock: ^2.0.1
 
   # The "flutter_lints" package below contains a set of recommended lints to
   # encourage good coding practices. The lint set provided by the package is

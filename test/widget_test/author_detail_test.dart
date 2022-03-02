@@ -1,6 +1,5 @@
 import 'package:codemagic_task/data/author_models.dart';
 import 'package:codemagic_task/presentation/author_detail_screen.dart';
-import 'package:codemagic_task/presentation/author_item.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:network_image_mock/network_image_mock.dart';
@@ -10,6 +9,7 @@ main() {
     slug: 'slug',
     name: "Jasper",
     description: "A good writer",
+    bio: "This is my bio",
     image:
         'https://cdn.pixabay.com/photo/2015/04/23/22/00/tree-736885__480.jpg',
   );
@@ -17,21 +17,21 @@ main() {
   testWidgets(
     "Ensure that author details set correctly",
     (tester) async {
-      await _pumpAuthorItemWidget(tester, author);
+      await _pumpAuthorDetailScreen(tester, author);
 
       final nameFinder = find.text("Jasper");
-      final descriptionFinder = find.text("A good writer");
+      final bioFinder = find.text("This is my bio");
 
       expect(nameFinder, findsOneWidget);
 
-      expect(descriptionFinder, findsOneWidget);
+      expect(bioFinder, findsOneWidget);
     },
   );
 
   testWidgets(
     "Ensure that Hero widget tag is author slug",
     (tester) async {
-      await _pumpAuthorItemWidget(tester, author);
+      await _pumpAuthorDetailScreen(tester, author);
 
       final heroFinder = find.byType(Hero);
 
@@ -52,7 +52,7 @@ main() {
             'https://cdn.pixabay.com/photo/2015/04/23/22/00/tree-736885__480.jpg',
       );
 
-      await _pumpAuthorItemWidget(tester, author);
+      await _pumpAuthorDetailScreen(tester, author);
 
       final heroFinder = find.byType(Hero);
 
@@ -64,45 +64,32 @@ main() {
   testWidgets(
     "Ensure that author image is set correctly found",
     (tester) async {
-      await _pumpAuthorItemWidget(tester, author);
+      await _pumpAuthorDetailScreen(tester, author);
 
-      final imageFinder = find.byType(CircleAvatar);
+      final containerFinder = find.byWidgetPredicate(_containerWithImageSet);
 
-      expect(imageFinder, findsOneWidget);
-      expect(
-        (tester.firstWidget(imageFinder) as CircleAvatar).backgroundImage,
-        const NetworkImage(
-            'https://cdn.pixabay.com/photo/2015/04/23/22/00/tree-736885__480.jpg'),
-      );
-    },
-  );
-
-  testWidgets(
-    "Ensure that when list tile tapped, AuthorDetail screen is opened",
-    (tester) async {
-      await _pumpAuthorItemWidget(tester, author);
-
-      final listTileFinder = find.byType(ListTile);
-
-      await tester.tap(listTileFinder);
-      await tester.pumpAndSettle();
-
-      final predicateFinder = find.byType(AuthorDetailScreen);
-
-      expect(predicateFinder, findsOneWidget);
+      expect(containerFinder, findsOneWidget);
     },
   );
 }
 
-Future<void> _pumpAuthorItemWidget(WidgetTester tester, Author author) async {
+bool _containerWithImageSet(Widget widget) =>
+    widget is Container &&
+    ((widget.decoration as BoxDecoration?)?.image?.image as NetworkImage?)
+            ?.url ==
+        'https://cdn.pixabay.com/photo/2015/04/23/22/00/tree-736885__480.jpg';
+
+Future<void> _pumpAuthorDetailScreen(WidgetTester tester, Author author) async {
   await mockNetworkImagesFor(
     () async {
       await tester.pumpWidget(
         MaterialApp(
-          home: AuthorItem(author: author),
-          routes: {
-            AuthorDetailScreen.screenName: (context) =>
-                const AuthorDetailScreen()
+          onGenerateRoute: (settings) {
+            settings = settings.copyWith(arguments: author);
+            return MaterialPageRoute(
+              settings: settings,
+              builder: (c) => const AuthorDetailScreen(),
+            );
           },
         ),
       );
