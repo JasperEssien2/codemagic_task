@@ -1,7 +1,10 @@
 import 'package:codemagic_task/business_logic/app_state.dart';
 import 'package:codemagic_task/presentation/author_detail_screen.dart';
 import 'package:codemagic_task/presentation/author_list_screen.dart';
+import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
+
+import 'data/author_service.dart';
 
 void main() async {
   runApp(const MyApp());
@@ -20,16 +23,19 @@ class MyApp extends StatelessWidget {
 
     return AppRootWidget(
       service: service,
-      child: MaterialApp(
-        title: 'Author App',
-        themeMode: ThemeMode.dark,
-        darkTheme: themeDataMap['dark'],
-        theme: themeDataMap['light'],
-        home: const AuthorsListScreen(),
-        routes: {
-          AuthorDetailScreen.screenName: (context) => const AuthorDetailScreen()
-        },
-      ),
+      child: Builder(builder: (context) {
+        return MaterialApp(
+          title: 'Author App',
+          themeMode: ThemeMode.dark,
+          darkTheme: themeDataMap['dark'],
+          theme: themeDataMap['light'],
+          home: const AuthorsListScreen(),
+          routes: {
+            AuthorDetailScreen.screenName: (context) =>
+                const AuthorDetailScreen()
+          },
+        );
+      }),
     );
   }
 
