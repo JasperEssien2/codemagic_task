@@ -1,38 +1,7 @@
 import 'package:codemagic_task/data/author_models.dart';
 import 'package:codemagic_task/data/author_service.dart';
-import 'package:dio/dio.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
-
-abstract class AppStateLogic {
-  void toggleDarkMode();
-
-  Future<void> fetchAuthors();
-}
-
-class AppState extends InheritedWidget {
-  const AppState({
-    Key? key,
-    required this.logic,
-    required Widget child,
-    required this.uiState,
-  }) : super(key: key, child: child);
-
-  final AppStateLogic logic;
-  final UiState uiState;
-
-  @override
-  bool updateShouldNotify(AppState oldWidget) {
-    return uiState != oldWidget.uiState;
-  }
-
-  static AppState of(BuildContext context) {
-    final result = context.dependOnInheritedWidgetOfExactType<AppState>();
-
-    assert(result != null, 'No $AppState found in context');
-    return result!;
-  }
-}
 
 class UiState {
   final bool isLoading;
@@ -101,27 +70,62 @@ class UiState {
         errorMessage.hashCode ^
         darkMode.hashCode;
   }
+
+  @override
+  String toString() {
+    return 'UiState(isLoading: $isLoading, isBottomLoading: $isBottomLoading, authors: $authors, errorMessage: $errorMessage, darkMode: $darkMode)';
+  }
+}
+
+abstract class AppStateLogic {
+  void toggleDarkMode();
+
+  Future<void> fetchAuthors();
+}
+
+class AppState extends InheritedWidget {
+  const AppState({
+    Key? key,
+    required this.logic,
+    required Widget child,
+    required this.uiState,
+  }) : super(key: key, child: child);
+
+  final AppStateLogic logic;
+  final UiState uiState;
+
+  @override
+  bool updateShouldNotify(AppState oldWidget) {
+    return uiState != oldWidget.uiState;
+  }
+
+  static AppState of(BuildContext context) {
+    final result = context.dependOnInheritedWidgetOfExactType<AppState>();
+
+    assert(result != null, 'No $AppState found in context');
+    return result!;
+  }
 }
 
 class AppRootWidget extends StatefulWidget {
   const AppRootWidget({
     Key? key,
     required this.child,
+    required this.service,
   }) : super(key: key);
 
+  final AuthorService service;
   final Widget child;
+
   @override
-  _AppRootWidgetState createState() => _AppRootWidgetState();
+  AppRootWidgetState createState() => AppRootWidgetState();
 }
 
-class _AppRootWidgetState extends State<AppRootWidget>
-    implements AppStateLogic {
-  final AuthorService service = AuthorServiceHttp(
-    dioInstance: Dio(),
-    authorUrl: "https://quotable.io/authors",
-  );
-
+@visibleForTesting
+class AppRootWidgetState extends State<AppRootWidget> implements AppStateLogic {
   UiState _uiState = UiState();
+
+  UiState get uiState => _uiState;
 
   int _nextPageNumber = 1;
 
@@ -142,7 +146,8 @@ class _AppRootWidgetState extends State<AppRootWidget>
         ),
       );
 
-      final response = await service.fetchAuthors(page: _nextPageNumber);
+      final response = await widget.service.fetchAuthors(page: _nextPageNumber);
+
       response.fold(
         (errorMessage) => _handleError(errorMessage),
         (right) => _handleSuccess(right),
