@@ -23,6 +23,7 @@ class AuthorServiceHttp implements AuthorService {
         queryParameters: {'page': page},
       );
 
+
       return Right(AuthorList.fromMap(response.data, authorImage));
     } catch (e) {
       return const Left("An error occurred, please try again!");

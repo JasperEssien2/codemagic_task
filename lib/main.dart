@@ -13,23 +13,21 @@ class MyApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final themeDataMap = _themeData(context);
+    final AuthorService service = AuthorServiceHttp(
+      dioInstance: Dio(),
+      authorUrl: "https://quotable.io/authors",
+    );
 
     return AppRootWidget(
-      child: Builder(
-        builder: (context) {
-          return MaterialApp(
-            title: 'Author App',
-            themeMode: AppState.of(context).uiState.darkMode
-                ? ThemeMode.dark
-                : ThemeMode.light,
-            darkTheme: themeDataMap['dark'],
-            theme: themeDataMap['light'],
-            home: const AuthorsListScreen(),
-            routes: {
-              AuthorDetailScreen.screenName: (context) =>
-                  const AuthorDetailScreen()
-            },
-          );
+      service: service,
+      child: MaterialApp(
+        title: 'Author App',
+        themeMode: ThemeMode.dark,
+        darkTheme: themeDataMap['dark'],
+        theme: themeDataMap['light'],
+        home: const AuthorsListScreen(),
+        routes: {
+          AuthorDetailScreen.screenName: (context) => const AuthorDetailScreen()
         },
       ),
     );
