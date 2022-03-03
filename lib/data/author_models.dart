@@ -26,7 +26,7 @@ class Author {
       link: map['link'],
       bio: map['bio'],
       description: map['description'],
-      id: map['id'],
+      id: map['_id'],
       name: map['name'],
       quoteCount: map['quoteCount'],
       slug: map['slug'],
