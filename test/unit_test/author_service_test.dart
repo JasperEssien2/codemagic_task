@@ -58,10 +58,28 @@ main() {
               expect(() => response.left, throwsException);
               expect(
                 response.right,
-                AuthorList.fromMap(
-                    dataJson,
-                    (_) =>
-                        "https://images.quotable.dev/profile/400/a-p-j-abdul-kalam.jpg"),
+                AuthorList(
+                  count: 20,
+                  totalCount: 700,
+                  page: 1,
+                  totalPages: 35,
+                  lastItemIndex: 20,
+                  authors: [
+                    Author(
+                      link:
+                          "https://en.wikipedia.org/wiki/A._P._J._Abdul_Kalam",
+                      bio:
+                          "Avul Pakir Jainulabdeen Abdul Kalam (15 October 1931 – 27 July 2015) was an aerospace scientist who served as the 11th President of India from 2002 to 2007.",
+                      description: "Scientist and 11th President of India",
+                      id: "Bblz8Knp6-ZB",
+                      name: "A. P. J. Abdul Kalam",
+                      quoteCount: 2,
+                      slug: "a-p-j-abdul-kalam",
+                      image:
+                          "https://images.quotable.dev/profile/400/a-p-j-abdul-kalam.jpg",
+                    )
+                  ],
+                ),
               );
             },
           );
@@ -95,7 +113,7 @@ main() {
             },
           );
 
-           test(
+          test(
             "Ensure that correct url is passed and page is set correctly ",
             () {
               _mockWhenSuccess(dio, url);
