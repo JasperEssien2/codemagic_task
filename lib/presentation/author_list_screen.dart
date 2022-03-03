@@ -81,8 +81,7 @@ class _AuthorsListScreenState extends State<AuthorsListScreen> {
   }
 
   bool fetchNextPageData(ScrollNotification notification) {
-    if (notification is ScrollEndNotification &&
-        notification.metrics.extentAfter == 0) {
+    if (notification is ScrollEndNotification) {
       AppState.of(context).logic.fetchAuthors();
       return true;
     }
