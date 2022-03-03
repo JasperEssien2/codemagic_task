@@ -26,7 +26,9 @@ class MyApp extends StatelessWidget {
       child: Builder(builder: (context) {
         return MaterialApp(
           title: 'Author App',
-          themeMode: ThemeMode.dark,
+          themeMode: AppState.of(context).uiState.darkMode
+              ? ThemeMode.dark
+              : ThemeMode.light,
           darkTheme: themeDataMap['dark'],
           theme: themeDataMap['light'],
           home: const AuthorsListScreen(),
