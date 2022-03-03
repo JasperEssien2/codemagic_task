@@ -87,9 +87,9 @@ main() {
       await tester.tap(listTileFinder);
       await tester.pumpAndSettle();
 
-      final predicateFinder = find.byType(AuthorDetailScreen);
+      final detailScreenFinder = find.byType(AuthorDetailScreen);
 
-      expect(predicateFinder, findsOneWidget);
+      expect(detailScreenFinder, findsOneWidget);
     },
   );
 }
