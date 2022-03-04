@@ -22,6 +22,7 @@ class UiState {
         isLoading: false,
         isBottomLoading: false,
         authors: authors,
+        errorMessage: null,
       );
 
   error(String errorMessage) => copyWith(
