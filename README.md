@@ -1,16 +1,11 @@
 # codemagic_task
 
-A new Flutter project.
+A flutter project that displays a list of famous authors and their biography.
 
-## Getting Started
+![App Demo](https://github.com/JasperEssien2/codemagic_task/blob/master/display/author_app_demo.gif)
 
-This project is a starting point for a Flutter application.
+- Uses `Dio` for API consumption.
+- Uses `Either` package to handle error.
+- Uses `InheritedWidget` for state management.
 
-A few resources to get you started if this is your first Flutter project:
-
-- [Lab: Write your first Flutter app](https://flutter.dev/docs/get-started/codelab)
-- [Cookbook: Useful Flutter samples](https://flutter.dev/docs/cookbook)
-
-For help getting started with Flutter, view our
-[online documentation](https://flutter.dev/docs), which offers tutorials,
-samples, guidance on mobile development, and a full API reference.
+Implementation of unit-testing and widget-testing.
