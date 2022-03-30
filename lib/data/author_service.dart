@@ -17,6 +17,7 @@ class AuthorServiceHttp implements AuthorService {
 
   @override
   Future<Either<String, AuthorList>> fetchAuthors({int page = 1}) async {
+    
     try {
       final response = await dioInstance.get(
         authorUrl,
