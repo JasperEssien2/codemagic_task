@@ -28,7 +28,6 @@ jobs:
       - run: flutter test --no-pub --coverage
 
       - name: Upload coverage to codecov
-        run: curl -s https://codecov.io/bash
-        shell: bash
-          with:
-            fail_ci_if_error: true
+         uses: codecov/codecov-action@v2
+        with:
+          fail_ci_if_error: true
